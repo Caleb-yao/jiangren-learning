@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registration Form</title>
+
+  <!-- Google Fonts: Playfair Display (display) + DM Sans (body) -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ============================================
+       CSS VARIABLES — colour palette & spacing
+    ============================================ */
+    :root {
+      --bg:        #0f0e11;
+      --surface:   #1a1820;
+      --border:    #2e2b38;
+      --border-focus: #b39ddb;
+      --accent:    #b39ddb;       /* soft lavender */
+      --accent-2:  #f0c27f;       /* warm gold */
+      --text:      #e8e4f0;
+      --text-muted:#8c87a0;
+      --error:     #f28b82;
+      --radius:    10px;
+      --gap:       1.4rem;
+    }
+
+    /* ============================================
+       RESET & BASE
+    ============================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      /* subtle diagonal grain */
+      background-image:
+        repeating-linear-gradient(
+          135deg,
+          rgba(255,255,255,.012) 0px,
+          rgba(255,255,255,.012) 1px,
+          transparent 1px,
+          transparent 60px
+        );
+    }
+
+    /* ============================================
+       CARD WRAPPER
+    ============================================ */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 640px;
+      padding: 3rem 2.8rem;
+      /* entrance animation */
+      animation: slideUp .55s cubic-bezier(.22,.68,0,1.2) both;
+      box-shadow: 0 30px 80px rgba(0,0,0,.55);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================
+       HEADER
+    ============================================ */
+    .card-header {
+      margin-bottom: 2.4rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.6rem;
+    }
+
+    .card-header .label {
+      font-size: .72rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent-2);
+      margin-bottom: .5rem;
+    }
+
+    .card-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    .card-header p {
+      margin-top: .5rem;
+      color: var(--text-muted);
+      font-size: .88rem;
+    }
+
+    /* ============================================
+       FORM LAYOUT
+    ============================================ */
+    form { display: flex; flex-direction: column; gap: var(--gap); }
+
+    /* Two-column row */
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+    }
+
+    /* ============================================
+       FIELD GROUP (label + input)
+    ============================================ */
+    .field { display: flex; flex-direction: column; gap: .45rem; }
+
+    .field label {
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* Required star */
+    .field label .req { color: var(--accent); margin-left: 2px; }
+
+    /* ============================================
+       INPUT / SELECT / TEXTAREA COMMON STYLES
+    ============================================ */
+    .field input,
+    .field select,
+    .field textarea {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .93rem;
+      font-weight: 300;
+      padding: .75rem 1rem;
+      outline: none;
+      transition: border-color .22s, box-shadow .22s, background .22s;
+      width: 100%;
+      /* remove default date-picker icon colour */
+      color-scheme: dark;
+    }
+
+    /* Focus state */
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--border-focus);
+      background: rgba(179,157,219,.07);
+      box-shadow: 0 0 0 3px rgba(179,157,219,.14);
+    }
+
+    /* HTML5 validation: invalid after user interaction */
+    .field input:not(:placeholder-shown):invalid {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(242,139,130,.12);
+    }
+
+    /* Textarea specific */
+    .field textarea {
+      resize: vertical;
+      min-height: 110px;
+      line-height: 1.6;
+    }
+
+    /* Select arrow */
+    .field select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238c87a0' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+
+    .field select option { background: #1a1820; }
+
+    /* ============================================
+       RADIO GROUP — Gender
+    ============================================ */
+    .radio-group {
+      display: flex;
+      gap: .8rem;
+      flex-wrap: wrap;
+    }
+
+    /* Hide default radio */
+    .radio-group input[type="radio"] { display: none; }
+
+    .radio-group label {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: .5rem 1.1rem;
+      font-size: .83rem;
+      font-weight: 400;
+      letter-spacing: .04em;
+      text-transform: none;         /* override field label uppercase */
+      color: var(--text-muted);
+      transition: border-color .2s, color .2s, background .2s;
+      user-select: none;
+    }
+
+    .radio-group input[type="radio"]:checked + label {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(179,157,219,.1);
+    }
+
+    .radio-group label:hover {
+      border-color: var(--border-focus);
+      color: var(--text);
+    }
+
+    /* ============================================
+       SECTION DIVIDER
+    ============================================ */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      color: var(--text-muted);
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ============================================
+       PASSWORD HINT
+    ============================================ */
+    .hint {
+      font-size: .74rem;
+      color: var(--text-muted);
+      margin-top: -.2rem;
+      padding-left: .1rem;
+    }
+
+    /* ============================================
+       SUBMIT BUTTON
+    ============================================ */
+    .btn-submit {
+      margin-top: .5rem;
+      background: linear-gradient(135deg, var(--accent) 0%, #9575cd 100%);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .92rem;
+      font-weight: 500;
+      letter-spacing: .05em;
+      padding: .9rem 1.5rem;
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s, filter .18s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Shimmer pseudo-element */
+    .btn-submit::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.18) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform .45s;
+    }
+
+    /* Hover effect */
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(179,157,219,.35);
+      filter: brightness(1.08);
+    }
+
+    .btn-submit:hover::after { transform: translateX(100%); }
+
+    .btn-submit:active { transform: translateY(0); }
+
+    /* ============================================
+       FOOTER NOTE
+    ============================================ */
+    .form-footer {
+      text-align: center;
+      font-size: .78rem;
+      color: var(--text-muted);
+      margin-top: -.4rem;
+    }
+
+    .form-footer a { color: var(--accent); text-decoration: none; }
+    .form-footer a:hover { text-decoration: underline; }
+
+    /* ============================================
+       RESPONSIVE — single column on mobile
+    ============================================ */
+    @media (max-width: 520px) {
+      .card { padding: 2rem 1.4rem; }
+      .row  { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       REGISTRATION CARD
+  =========================================== -->
+  <div class="card" role="main">
+
+    <!-- Header -->
+    <div class="card-header">
+      <p class="label">Get started</p>
+      <h1>Create your account</h1>
+      <p>Fill in the details below. All fields marked <span style="color:var(--accent)">*</span> are required.</p>
+    </div>
+
+    <!-- Form -->
+    <form id="registrationForm" novalidate>
+
+      <!-- ── PERSONAL INFO ── -->
+      <div class="divider">Personal info</div>
+
+      <!-- First Name + Last Name (two columns) -->
+      <div class="row">
+
+        <!-- First Name -->
+        <div class="field">
+          <label for="firstName">First Name <span class="req">*</span></label>
+          <input
+            type="text"
+            id="firstName"
+            name="firstName"
+            placeholder="Jane"
+            required
+            minlength="2"
+            autocomplete="given-name"
+          />
+        </div>
+
+        <!-- Last Name -->
+        <div class="field">
+          <label for="lastName">Last Name <span class="req">*</span></label>
+          <input
+            type="text"
+            id="lastName"
+            name="lastName"
+            placeholder="Smith"
+            required
+            minlength="2"
+            autocomplete="family-name"
+          />
+        </div>
+
+      </div><!-- /.row -->
+
+      <!-- Email Address -->
+      <div class="field">
+        <label for="email">Email Address <span class="req">*</span></label>
+        <!-- type="email" triggers built-in format validation -->
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="jane@example.com"
+          required
+          autocomplete="email"
+        />
+      </div>
+
+      <!-- Date of Birth -->
+      <div class="field">
+        <label for="dob">Date of Birth <span class="req">*</span></label>
+        <input
+          type="date"
+          id="dob"
+          name="dob"
+          required
+          max="2026-05-18"
+        /><!-- reasonable upper bound for adults -->
+      </div>
+
+      <!-- Gender — radio buttons -->
+      <div class="field">
+        <label>Gender <span class="req">*</span></label>
+        <div class="radio-group">
+
+          <input type="radio" id="genderMale"   name="gender" value="male"   required />
+          <label for="genderMale">Male</label>
+
+          <input type="radio" id="genderFemale" name="gender" value="female" />
+          <label for="genderFemale">Female</label>
+
+          <input type="radio" id="genderOther"  name="gender" value="other"  />
+          <label for="genderOther">Other</label>
+
+        </div>
+      </div>
+
+      <!-- ── ACCOUNT SETUP ── -->
+      <div class="divider">Account setup</div>
+
+      <!-- Password -->
+      <div class="field">
+        <label for="password">Password <span class="req">*</span></label>
+        <!--
+          minlength="8"  — at least 8 characters
+          pattern        — must contain letter + digit + special char
+        -->
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="••••••••"
+          required
+          minlength="8"
+          pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
+          autocomplete="new-password"
+        />
+        <p class="hint">Min. 8 characters — include a letter, a number, and a special character (@$!%*#?&)</p>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="field">
+        <label for="confirmPassword">Confirm Password <span class="req">*</span></label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          placeholder="••••••••"
+          required
+          autocomplete="new-password"
+        />
+      </div>
+
+      <!-- ── PROFILE ── -->
+      <div class="divider">Profile</div>
+
+      <!-- Profession dropdown -->
+      <div class="field">
+        <label for="profession">Choose Your Profession <span class="req">*</span></label>
+        <select id="profession" name="profession" required>
+          <option value="" disabled selected>Select a profession…</option>
+          <option value="web_dev">Web Development</option>
+          <option value="data_analytics">Data Analytics</option>
+          <option value="uiux">UI/UX Design</option>
+          <option value="mobile_dev">Mobile Development</option>
+          <option value="devops">DevOps / Cloud</option>
+          <option value="cybersecurity">Cybersecurity</option>
+          <option value="ai_ml">AI / Machine Learning</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <!-- About Me -->
+      <div class="field">
+        <label for="aboutMe">About Me <span class="req">*</span></label>
+        <textarea
+          id="aboutMe"
+          name="aboutMe"
+          placeholder="Tell us a little about yourself…"
+          required
+          minlength="20"
+        ></textarea>
+      </div>
+
+      <!-- Submit button -->
+      <button type="submit" class="btn-submit">Create Account →</button>
+
+      <!-- Login link -->
+      <p class="form-footer">Already have an account? <a href="#">Sign in</a></p>
+
+    </form><!-- /#registrationForm -->
+  </div><!-- /.card -->
+
+  <!-- ============================================
+       JAVASCRIPT — client-side validation
+  ============================================= -->
+  <script>
+    const form = document.getElementById('registrationForm');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault(); // prevent actual submission for demo
+
+      /* ── Password match check ── */
+      const pw  = document.getElementById('password');
+      const cpw = document.getElementById('confirmPassword');
+
+      if (pw.value !== cpw.value) {
+        cpw.setCustomValidity('Passwords do not match.');
+        cpw.reportValidity();
+        return;
+      } else {
+        cpw.setCustomValidity('');
+      }
+
+      /* ── Gender required check (radio group not caught by :invalid alone) ── */
+      const genderSelected = document.querySelector('input[name="gender"]:checked');
+      if (!genderSelected) {
+        alert('Please select a gender.');
+        return;
+      }
+
+      /* ── HTML5 built-in validation ── */
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      /* ── All good — success feedback ── */
+      alert('🎉 Account created successfully! (demo)');
+    });
+
+    /* Clear confirm-password custom error once user re-types */
+    document.getElementById('confirmPassword').addEventListener('input', function () {
+      this.setCustomValidity('');
+    });
+  </script>
+
+</body>
+</html>
