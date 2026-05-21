@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerMate AI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+               <img src="assets/logo-icon.png" alt="CareerMate AI Logo" class="logo-icon">
+               <img src="assets/logo-text.png" alt="CareerMate AI" class="logo-text">
+            </div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#demo" class="nav-link">Demo</a>
+            </div>
+            <div class="nav-right">
+                <div class="nav-buttons">
+                    <a href="#signin" class="btn-signin">Sign In</a>
+                    <a href="#start" class="btn-start">Start for Free</a>
+                </div>
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#features" class="mobile-link">Features</a>
+        <a href="#demo" class="mobile-link">Demo</a>
+        <a href="#signin" class="mobile-link">Sign In</a>
+        <a href="#start" class="btn-start">Start for Free</a>
+    </div>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Your AI Career Practice Partner
+                    </h1>
+                    <p class="hero-description">
+                        Get job-ready with AI — from resumes to interviews,<br>
+                        CareerMate AI coaches you step by step.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#start" class="btn-hero-primary">Start for Free
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 10H16M16 10L10 4M16 10L10 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#demo" class="btn-hero-secondary">Watch Demo
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 10H16M16 10L10 4M16 10L10 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <img src="assets/arrow-decoration.png" alt="" aria-hidden="true" class="hero-decoration">
+            </div>
+        </section>
+
+        <!-- Features Showcase Section -->
+        <section class="features" id="features">
+            <div class="features-container">
+                <img src="assets/features-showcase.png" alt="CareerMate AI Features" class="features-image">
+            </div>
+        </section>
+
+        <!-- Problem–Solution Section -->
+        <section class="problem-solution">
+            <div class="problem-solution-container">
+                <!-- Left: Problems -->
+                <div class="problems-side">
+                    <h2 class="problems-title">Still Struggling with Job Applications?</h2>
+                    <div class="problem-list">
+                        <div class="problem-item">
+                            <p class="problem-text">Your resume keeps getting ignored.</p>
+                            <div class="problem-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="problem-item">
+                            <p class="problem-text">You don't know what interviewers expect.</p>
+                            <div class="problem-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="problem-item">
+                            <p class="problem-text">You're unsure how to plan your career.</p>
+                            <div class="problem-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Solution Card -->
+                <div class="solution-side">
+                    <div class="solution-card">
+                        <div class="solution-content">
+                            <h3 class="solution-text">CareerMate AI helps you fix all of that — smartly.</h3>
+                        </div>
+                        <img src="assets/rocket-icon.png" alt="Rocket" class="rocket-icon">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Cards Section -->
+        <section class="feature-cards" id="demo">
+            <div class="feature-cards-container">
+                <h2 class="feature-cards-title">Everything You Need to Grow Your Career</h2>
+                <div class="feature-cards-grid">
+                    <div class="feature-card">
+                        <div class="feature-card-image">
+                            <img src="assets/card-mock-interview.png" alt="AI Mock Interview" class="card-image">
+                        </div>
+                        <div class="feature-card-content">
+                            <h3 class="feature-card-title">AI Mock Interview</h3>
+                            <p class="feature-card-description">Practice real interview questions and get instant feedback.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-image">
+                            <img src="assets/card-resume-analyzer.png" alt="Resume Analyzer" class="card-image">
+                        </div>
+                        <div class="feature-card-content">
+                            <h3 class="feature-card-title">Resume Analyzer</h3>
+                            <p class="feature-card-description">Upload your resume, and get improvement tips instantly.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-image">
+                            <img src="assets/card-career-coach.png" alt="Career Coach Mode" class="card-image">
+                        </div>
+                        <div class="feature-card-content">
+                            <h3 class="feature-card-title">Career Coach Mode</h3>
+                            <p class="feature-card-description">Discover your ideal job path and skill roadmap.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-image">
+                            <img src="assets/card-project-reviewer.png" alt="Project Reviewer" class="card-image">
+                        </div>
+                        <div class="feature-card-content">
+                            <h3 class="feature-card-title">Project Reviewer</h3>
+                            <p class="feature-card-description">Let AI turn your past projects into strong interview stories.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials">
+            <div class="testimonials-container">
+                <h2 class="section-title">What Our Users Say</h2>
+                <p class="section-subtitle">Real stories from job seekers who landed their dream roles</p>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"CareerMate AI helped me land my first tech job in just 3 weeks. The mock interviews were incredibly realistic!"</p>
+                        <div class="testimonial-author">
+                            <img src="assets/testimonial-emily.png" alt="Emily Chen" class="testimonial-avatar">
+                            <div class="testimonial-info">
+                                <span class="testimonial-name">Emily Chen</span>
+                                <span class="testimonial-role">Software Engineer @ Google</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"The resume analyzer pointed out issues I never noticed. My response rate tripled after the revisions."</p>
+                        <div class="testimonial-author">
+                            <img src="assets/testimonial-jason.png" alt="Jason Park" class="testimonial-avatar">
+                            <div class="testimonial-info">
+                                <span class="testimonial-name">Jason Park</span>
+                                <span class="testimonial-role">Product Manager @ Meta</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Banner -->
+        <section class="cta-banner" id="start">
+            <div class="cta-banner-container">
+                <h2 class="cta-banner-title">Ready to Land Your Dream Job?</h2>
+                <p class="cta-banner-subtitle">Join thousands of job seekers who leveled up their career with CareerMate AI.</p>
+                <div class="cta-banner-buttons">
+                    <a href="#" class="btn-cta-primary">Start for Free</a>
+                    <a href="#" class="btn-cta-secondary">Learn More</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <img src="assets/logo-icon.png" alt="CareerMate AI" class="footer-logo-icon">
+            </div>
+            <p class="footer-copy">&copy; 2025 CareerMate AI. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const toggle = document.getElementById('navToggle');
+        const menu = document.getElementById('mobileMenu');
+        toggle.addEventListener('click', () => menu.classList.toggle('active'));
+        // Close mobile menu when a link is clicked
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => menu.classList.remove('active'));
+        });
+    </script>
+</body>
+</html>
