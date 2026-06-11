@@ -220,11 +220,18 @@ a {
   margin: 0 auto;
 }
 
+/* === 三段式 Flex 布局 ===
+   每个子区块 flex:1，让三列等宽；
+   logo → start，links → center，nav-right → end
+   移动端隐藏 nav-links；flex:1 保留在 DOM 但不影响渲染 */
+
 .logo {
+  flex: 1;                  /* 占据左侧 1/3 等份 */
   display: flex;
   align-items: center;
   gap: var(--space-2);
   cursor: pointer;
+  justify-content: flex-start;
 }
 
 .logo-icon {
@@ -232,15 +239,21 @@ a {
   width: auto;
 }
 
-/* Hidden on mobile */
+/* 移动端默认隐藏，桌面断点恢复 */
 .nav-links {
   display: none;
+  flex: 1;                  /* 占据中间 1/3 等份（桌面生效）*/
+  justify-content: center;  /* 链接组在中间居中 */
+  align-items: center;
+  gap: 40px;
 }
 
 .nav-right {
+  flex: 1;                  /* 占据右侧 1/3 等份 */
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  justify-content: flex-end; /* 按钮组贴右对齐 */
 }
 
 .nav-buttons {
@@ -437,6 +450,41 @@ main {
   display: none;
 }
 
+/* Hero Preview Cards — Grid (mobile: 1 col → tablet+: 3 cols) */
+.hero-preview-grid {
+  display: grid;
+  grid-template-columns: 1fr;        /* 移动端：单列堆叠 */
+  gap: var(--space-4);
+  margin-top: var(--space-12);
+}
+
+.hero-preview-card {
+  background-color: var(--color-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hero-preview-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+
+.hero-preview-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.hero-preview-label {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
+
 /* ============================================================
    FEATURES SECTION — mobile first
    ============================================================ */
@@ -563,7 +611,29 @@ main {
   font-weight: 700;
   line-height: var(--line-height-tight);
   color: #ffffff;
-  margin: 0;
+  margin: 0 0 var(--space-8) 0;
+}
+
+/* CTA button inside gradient card — white fill on gradient bg */
+.btn-solution {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: #ffffff;
+  color: var(--color-primary);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  padding: 12px 28px;
+  border-radius: var(--radius-full);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.btn-solution:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  color: var(--color-primary);
 }
 
 .rocket-icon {
@@ -602,13 +672,14 @@ main {
 
 .feature-cards-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr;   /* 移动端：单列 */
   gap: var(--space-6);
+  align-items: stretch;          /* 同行卡片等高（Grid 默认行为，显式声明更清晰）*/
 }
 
 .feature-card {
   display: flex;
-  flex-direction: column;
+  flex-direction: column;        /* 竖向排列：图片 → 内容 */
   background-color: var(--color-bg);
   padding: var(--space-6);
   border-radius: var(--radius-lg);
@@ -626,6 +697,7 @@ main {
   margin-bottom: var(--space-6);
   border-radius: var(--radius-md);
   overflow: hidden;
+  flex-shrink: 0;                /* 图片区域不压缩 */
 }
 
 .card-image {
@@ -636,6 +708,7 @@ main {
 .feature-card-content {
   display: flex;
   flex-direction: column;
+  flex: 1;                       /* 撑满卡片剩余高度，确保同行卡片内容顶对齐 */
 }
 
 .feature-card-title {
@@ -650,6 +723,206 @@ main {
   line-height: var(--line-height-normal);
   color: var(--color-text-secondary);
   margin: 0;
+}
+
+/* ============================================================
+   ACTION SECTION (Flow + Chat Panel) — mobile first
+   ============================================================ */
+.action-section {
+  width: 100%;
+  background-color: var(--color-bg);
+  padding: var(--space-16) var(--space-4);
+}
+
+.action-container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;     /* 移动端：单列堆叠 */
+  gap: var(--space-12);
+  align-items: center;
+}
+
+/* ── Left: Step Flow ── */
+.action-flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+}
+
+.flow-step {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+/* Left track: number badge + connector line */
+.flow-step-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.flow-step-number {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--color-gradient);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-primary);
+}
+
+.flow-step-line {
+  width: 2px;
+  flex: 1;
+  min-height: 28px;
+  background: var(--color-border);
+  margin: var(--space-2) 0;
+}
+
+/* Hide connector after last step */
+.flow-step:last-child .flow-step-line {
+  display: none;
+}
+
+.flow-step-body {
+  padding-bottom: var(--space-8);
+}
+
+.flow-step:last-child .flow-step-body {
+  padding-bottom: 0;
+}
+
+.flow-step-title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-black);
+  margin: 0 0 var(--space-2) 0;
+  line-height: var(--line-height-tight);
+  /* Vertically center with the number badge */
+  padding-top: 10px;
+}
+
+.flow-step-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+  margin: 0;
+}
+
+/* ── Right: Chat Panel ── */
+.action-chat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-panel-card {
+  width: 100%;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chat-panel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+
+.chat-panel-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── Floating Button ── */
+.floating-btn {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: 900;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--color-gradient);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-primary-lg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-btn:hover {
+  transform: scale(1.12);
+  box-shadow: 0 8px 30px rgba(80, 79, 253, 0.5);
+}
+
+/* ── Back to Top Button ── */
+.back-to-top {
+  position: fixed;
+  /* 叠在 chat 按钮正上方：56px(chat) + 12px(gap) + 24px(bottom) = 92px */
+  bottom: calc(var(--space-6) + 56px + var(--space-3));
+  right: var(--space-6);
+  z-index: 900;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  /* 默认隐藏：透明 + 轻微下移，避免占用空间 */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* JS 添加 .visible 后显示 */
+.back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background-color: var(--color-bg-secondary);
+  box-shadow: var(--shadow-lg);
+  color: var(--color-black);
+}
+
+/* 移动端：稍微缩小，紧贴右下角 */
+@media (max-width: 767px) {
+  .back-to-top {
+    width: 38px;
+    height: 38px;
+    right: var(--space-4);
+    bottom: calc(var(--space-4) + 56px + var(--space-3));
+  }
+
+  .floating-btn {
+    right: var(--space-4);
+    bottom: var(--space-4);
+  }
 }
 
 /* ============================================================
@@ -682,7 +955,15 @@ main {
   padding: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-4);
+  /* 卡片等高：Grid stretch + flex column 让 author 始终贴底 */
+}
+
+.testimonial-stars {
+  color: #f59e0b;           /* amber 星星色 */
+  font-size: var(--font-size-md);
+  letter-spacing: 2px;
+  line-height: 1;
 }
 
 .testimonial-text {
@@ -690,7 +971,7 @@ main {
   line-height: var(--line-height-normal);
   color: var(--color-text-tertiary);
   font-style: italic;
-  flex: 1;
+  flex: 1;                  /* 撑满剩余高度，把 author 推到底部 */
 }
 
 .testimonial-author {
@@ -802,50 +1083,106 @@ main {
 }
 
 /* ============================================================
-   FOOTER
+   FOOTER — mobile first
    ============================================================ */
 footer {
   background-color: #111;
+}
+
+/* ── Main section: brand + links ── */
+.footer-main {
   padding: var(--space-12) var(--space-4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .footer-container {
   max-width: var(--container-max);
   margin: 0 auto;
   display: flex;
+  flex-direction: column;   /* 移动端：品牌在上，链接在下 */
+  gap: var(--space-10);
+}
+
+/* Left: brand block */
+.footer-brand {
+  display: flex;
   flex-direction: column;
-  align-items: center;
   gap: var(--space-4);
-  text-align: center;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .footer-logo-icon {
   height: 28px;
   width: auto;
-  opacity: 0.8;
   filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.footer-logo-name {
+  color: #fff;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+.footer-tagline {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.45);
+  line-height: var(--line-height-normal);
+  max-width: 260px;
+}
+
+/* Right: link groups */
+.footer-links-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8) var(--space-10);
+}
+
+.footer-link-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 110px;
+}
+
+.footer-link-heading {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: var(--space-1, 4px);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.footer-link-group a {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.45);
+  transition: color 0.25s ease;
+}
+
+.footer-link-group a:hover {
+  color: #fff;
+}
+
+/* ── Bottom bar: copyright ── */
+.footer-bottom {
+  padding: var(--space-4) var(--space-4);
+}
+
+.footer-bottom-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  text-align: center;
 }
 
 .footer-copy {
   font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.footer-links {
-  display: flex;
-  gap: var(--space-6);
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.footer-links a {
-  font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.5);
-  transition: color 0.3s ease;
-}
-
-.footer-links a:hover {
-  color: #fff;
+  color: rgba(255, 255, 255, 0.25);
 }
 
 /* ============================================================
@@ -911,6 +1248,13 @@ footer {
     padding: 14px 32px;
   }
 
+  /* Hero preview cards — 3 columns on tablet+ */
+  .hero-preview-grid {
+    grid-template-columns: repeat(3, 1fr);  /* 横向三栏 */
+    gap: var(--space-6);
+    margin-top: var(--space-16);
+  }
+
   /* Features */
   .features {
     padding: var(--space-20) var(--space-6);
@@ -948,6 +1292,19 @@ footer {
     padding: var(--space-20) var(--space-6);
   }
 
+  /* Action Section */
+  .action-section {
+    padding: var(--space-20) var(--space-6);
+  }
+
+  .flow-step-title {
+    font-size: var(--font-size-md);
+  }
+
+  .flow-step-desc {
+    font-size: var(--font-size-base);
+  }
+
   .feature-cards-title {
     font-size: var(--font-size-2xl);
     margin-bottom: var(--space-12);
@@ -969,6 +1326,21 @@ footer {
 
   .testimonials-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Footer — 左 logo 右链接横向布局 */
+  .footer-main {
+    padding: var(--space-16) var(--space-6);
+  }
+
+  .footer-container {
+    flex-direction: row;              /* 横向：品牌在左，链接组在右 */
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .footer-bottom {
+    padding: var(--space-4) var(--space-6);
   }
 
   /* CTA Banner */
@@ -995,12 +1367,9 @@ footer {
   }
 
   .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 40px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    /* 纯 Flexbox 居中：不再需要 position:absolute + translateX hack */
+    display: flex;   /* 恢复显示 */
+    /* flex:1 / justify-content:center 已在基础样式中声明，此处继承 */
   }
 
   .nav-link {
@@ -1076,6 +1445,12 @@ footer {
     gap: 60px 50px;
   }
 
+  /* Action Section — 2 columns on desktop */
+  .action-container {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-16);
+  }
+
   /* Testimonials */
   .testimonials-container {
     text-align: center;
@@ -1085,4 +1460,281 @@ footer {
   .cta-banner-title {
     font-size: var(--font-size-3xl);
   }
+}
+
+/* ============================================================
+   CONTACT SECTION — two-column: info left, form card right
+   ============================================================ */
+.contact {
+  width: 100%;
+  background-color: var(--color-bg-secondary);
+  padding: var(--space-16) var(--space-4);
+}
+
+/* Two-column grid: mobile stacks, desktop side-by-side */
+.contact-container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-10);
+  align-items: start;
+}
+
+/* ── Left: Info ── */
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.contact-heading {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+  color: var(--color-black);
+}
+
+.contact-desc {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+}
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.contact-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contact-detail-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+}
+
+.contact-detail-value {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── Right: Form Card ── */
+.contact-form-wrap {
+  background-color: var(--color-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-8);
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Two dropdowns side by side */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+}
+
+/* ── Inputs, Selects, Textarea ── */
+.form-input {
+  width: 100%;
+  padding: 10px var(--space-3);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(80, 79, 253, 0.12);
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: var(--line-height-normal);
+}
+
+/* ── Error state ── */
+/* <small> is inline by default — force block so it sits below the input */
+.form-error {
+  display: none;
+  font-size: var(--font-size-sm);
+  color: #ef4444;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.form-group.has-error .form-error {
+  display: block;
+}
+
+.form-group.has-error .form-input {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+/* ── Submit row: button pinned to right ── */
+.form-submit-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 12px var(--space-6);
+  background-color: var(--color-black);
+  color: #fff;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #333;
+  transform: translateY(-1px);
+}
+
+/* Loading spinner */
+.btn-submit-spinner {
+  display: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: var(--radius-full);
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.btn-submit.loading .btn-submit-spinner {
+  display: block;
+}
+
+.btn-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+}
+
+/* Success state */
+.btn-submit.success {
+  background-color: #10b981;
+}
+
+/* Tablet+ */
+@media (min-width: 768px) {
+  .contact {
+    padding: var(--space-20) var(--space-6);
+  }
+
+  .contact-heading {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+/* Desktop: two columns */
+@media (min-width: 1024px) {
+  .contact-container {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-16);
+    align-items: center;
+  }
+}
+
+/* ============================================================
+   TOAST NOTIFICATION SYSTEM
+   ============================================================ */
+#toast-container {
+  position: fixed;
+  top: calc(var(--nav-height) + var(--space-4));
+  right: var(--space-4);
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  pointer-events: none;       /* container itself doesn't intercept clicks */
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 13px var(--space-5);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: #fff;
+  max-width: 320px;
+  pointer-events: auto;
+  animation: toastSlideIn 0.3s ease forwards;
+}
+
+.toast--success { background-color: #10b981; }
+.toast--error   { background-color: #ef4444; }
+
+.toast.removing {
+  animation: toastSlideOut 0.25s ease forwards;
+}
+
+.toast-icon {
+  font-size: var(--font-size-md);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+
+@keyframes toastSlideOut {
+  from { opacity: 1; transform: translateX(0);    }
+  to   { opacity: 0; transform: translateX(24px); }
 }
