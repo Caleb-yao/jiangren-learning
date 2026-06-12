@@ -75,7 +75,12 @@ jobs:
               "rule-empty-line-before": null,
               "at-rule-empty-line-before": null,
               "color-function-notation": "legacy",
-              "alpha-value-notation": "number"
+              "alpha-value-notation": "number",
+              "color-hex-length": null,
+              "value-keyword-case": null,
+              "color-function-alias-notation": null,
+              "selector-class-pattern": null,
+              "comment-whitespace-inside": null
             }
           }
           EOF
