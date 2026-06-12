@@ -1,0 +1,143 @@
+name: CareerMate CI / CD
+
+# 触发条件：CareerMate 目录有变更时触发
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'CareerMate/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'CareerMate/**'
+
+# ─────────────────────────────────────────────────────────────
+# Job 1: Lint & Validate
+#   - HTML 结构校验 (htmlhint)
+#   - CSS 语法检查 (stylelint)
+#   - JS 静态分析 (eslint)
+# ─────────────────────────────────────────────────────────────
+jobs:
+  lint:
+    name: Lint & Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 全局安装 linting 工具（无需 package.json）
+      - name: Install linting tools
+        run: |
+          npm install -g \
+            htmlhint \
+            stylelint \
+            stylelint-config-standard \
+            eslint \
+            globals
+
+      # ── HTML 校验 ──
+      # 检查标签闭合、属性规范、语义化等基础问题
+      - name: Validate HTML (htmlhint)
+        run: |
+          cat > .htmlhintrc << 'EOF'
+          {
+            "tagname-lowercase": true,
+            "attr-lowercase": true,
+            "attr-value-double-quotes": true,
+            "doctype-first": true,
+            "tag-pair": true,
+            "id-unique": true,
+            "src-not-empty": true,
+            "attr-no-duplication": true
+          }
+          EOF
+          htmlhint CareerMate/index.html
+
+      # ── CSS 校验 ──
+      # 基于 stylelint-config-standard，放开部分与项目习惯冲突的规则
+      - name: Lint CSS (stylelint)
+        run: |
+          cat > .stylelintrc.json << 'EOF'
+          {
+            "extends": ["stylelint-config-standard"],
+            "rules": {
+              "comment-empty-line-before": null,
+              "no-descending-specificity": null,
+              "declaration-empty-line-before": null,
+              "custom-property-empty-line-before": null,
+              "rule-empty-line-before": null,
+              "at-rule-empty-line-before": null,
+              "color-function-notation": "legacy",
+              "alpha-value-notation": "number"
+            }
+          }
+          EOF
+          stylelint "CareerMate/styles.css"
+
+      # ── JS 静态分析 ──
+      # 检查未声明变量、语法错误等；对 browser 全局变量（window/document）放行
+      - name: Lint JavaScript (eslint)
+        run: |
+          cat > eslint.config.mjs << 'EOF'
+          import globals from "globals";
+          export default [
+            {
+              languageOptions: {
+                ecmaVersion: 2022,
+                globals: { ...globals.browser }
+              },
+              rules: {
+                "no-undef":        "error",
+                "no-unused-vars":  ["warn", { "varsIgnorePattern": "^_" }],
+                "no-console":      "off",
+                "eqeqeq":          "warn"
+              }
+            }
+          ];
+          EOF
+          eslint CareerMate/main.js
+
+  # ─────────────────────────────────────────────────────────────
+  # Job 2: Deploy to GitHub Pages
+  #   - 仅在 push 到 master 且 lint 全部通过后触发
+  #   - 将 CareerMate/ 作为站点根目录部署
+  # ─────────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: lint                         # lint 通过才执行
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
+
+      # 将 CareerMate/ 文件夹打包为 Pages artifact
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: CareerMate/
+
+      # 部署到 GitHub Pages，完成后输出访问 URL
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
