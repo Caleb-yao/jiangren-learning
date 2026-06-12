@@ -39,8 +39,7 @@ jobs:
             htmlhint \
             stylelint \
             stylelint-config-standard \
-            eslint \
-            globals
+            eslint
 
       # ── HTML 校验 ──
       # 检查标签闭合、属性规范、语义化等基础问题
@@ -93,13 +92,23 @@ jobs:
       # 检查未声明变量、语法错误等；对 browser 全局变量（window/document）放行
       - name: Lint JavaScript (eslint)
         run: |
-          cat > eslint.config.mjs << 'EOF'
-          import globals from "globals";
-          export default [
+          cat > eslint.config.cjs << 'EOF'
+          module.exports = [
             {
               languageOptions: {
                 ecmaVersion: 2022,
-                globals: { ...globals.browser }
+                sourceType: "script",
+                globals: {
+                  window: "readonly",
+                  document: "readonly",
+                  console: "readonly",
+                  setTimeout: "readonly",
+                  clearTimeout: "readonly",
+                  URLSearchParams: "readonly",
+                  fetch: "readonly",
+                  FormData: "readonly",
+                  Event: "readonly"
+                }
               },
               rules: {
                 "no-undef":        "error",
@@ -110,7 +119,7 @@ jobs:
             }
           ];
           EOF
-          eslint CareerMate/main.js
+          eslint --config eslint.config.cjs CareerMate/main.js
 
   # ─────────────────────────────────────────────────────────────
   # Job 2: Deploy to GitHub Pages
