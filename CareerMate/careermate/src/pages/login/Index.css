@@ -1,0 +1,94 @@
+/* Login 页面样式 —— 沿用 CareerMate 品牌紫蓝渐变 */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(137deg, #504ffd 6%, #40c3fb 96%);
+  padding: 24px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.login-brand {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  background: linear-gradient(110deg, #504ffd 11%, #40c3fb 92%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.login-title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: #161616;
+  margin: 0;
+}
+
+.login-subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: #666666;
+  margin: 0 0 8px 0;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.login-field input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  color: #161616;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-field input:focus {
+  border-color: #504ffd;
+  box-shadow: 0 0 0 3px rgba(80, 79, 253, 0.12);
+}
+
+.login-btn {
+  margin-top: 8px;
+  padding: 13px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(110deg, #504ffd 11%, #40c3fb 92%);
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(80, 79, 253, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(80, 79, 253, 0.4);
+}

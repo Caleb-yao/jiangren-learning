@@ -1,0 +1,5 @@
+/* 全局应用容器。
+   各页面的具体样式分别放在 pages/login/Index.css、pages/home/home.css。 */
+.App {
+  min-height: 100vh;
+}
