@@ -1,4 +1,4 @@
-// In-memory data store (resets on restart). Good enough for a learning API.
+// In-memory data store (resets on restart). Shared by the model layer.
 
 const movies = [
     { id: 1, title: 'Inception',      genre: 'Sci-Fi', year: 2010, rating: 8.8, director: 'Christopher Nolan' },
@@ -14,7 +14,6 @@ const reviews = [
     { id: 3, movieId: 2, author: 'Carol', rating: 5, comment: 'A masterpiece.',  createdAt: '2026-01-03T00:00:00.000Z' },
 ];
 
-// simple auto-increment id generators
 let movieSeq = movies.length;
 let reviewSeq = reviews.length;
 

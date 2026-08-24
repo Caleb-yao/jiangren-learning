@@ -12,6 +12,20 @@ npm run dev      # nodemon, or: npm start
 
 CORS is enabled, so a frontend page can call the API directly.
 
+## Project structure
+
+Layered architecture (separation of concerns):
+
+```
+src/
+  routes/       route definitions (path + method -> controller)
+  controllers/  request handling (read req, call model, send res)
+  models/       data operations (search / sort / paginate / CRUD)
+  middleware/   cors, logger, 404, error handler
+  app.js        assembles the express app
+server.js       starts the server
+```
+
 ## Endpoints
 
 Base path: `/v1`
