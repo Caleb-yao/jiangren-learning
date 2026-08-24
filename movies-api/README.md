@@ -99,6 +99,27 @@ Response:
 }
 ```
 
+## Testing (Postman / Newman)
+
+`postman/collections/movies-api.postman_collection.json` covers **every endpoint** with
+normal + error scenarios (18 requests, 45 assertions). Each request asserts the status
+code and response body. It creates its own movie/review, exercises them, then cleans up.
+
+Run in Postman (import the file and hit "Run"), or from the CLI with Newman:
+
+```bash
+npm run dev        # start the API (MongoDB must be running) in one terminal
+npm run test:api   # newman run the collection in another
+```
+
+Scenarios covered:
+
+| Type | Cases |
+|------|-------|
+| Happy path | health, create, list, search+sort+paginate, get by id, update, add review, list reviews |
+| Errors | missing id -> 404, invalid ObjectId -> 404, no title -> 400, update missing -> 404, rating out of range -> 400, missing rating -> 400, reviews for missing movie -> 404, unknown route -> 404 |
+| Cleanup | delete -> 204, then get -> 404 |
+
 ## Data models
 
 ```

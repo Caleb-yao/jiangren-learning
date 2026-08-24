@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "seed": "node src/utils/seed.js"
+    "seed": "node src/utils/seed.js",
+    "test:api": "newman run postman/collections/movies-api.postman_collection.json"
   },
   "keywords": [
     "express",
@@ -31,6 +32,7 @@
     "winston": "^3.19.0"
   },
   "devDependencies": {
+    "newman": "^6.2.2",
     "nodemon": "^3.1.14"
   }
 }

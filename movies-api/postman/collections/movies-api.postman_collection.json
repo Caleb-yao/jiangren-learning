@@ -1,89 +1,720 @@
 {
   "info": {
-    "name": "Movies API (Day2)",
-    "description": "Movies CRUD + Reviews. Full flow: create -> read -> update -> review -> delete.",
+    "name": "Movies API - Full (Day6)",
+    "description": "Every endpoint with normal + error scenarios. Each request asserts status code and response body. Run top-to-bottom (Newman or Postman Runner): it creates its own movie/review, exercises them, then cleans up.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:3000" },
-    { "key": "movieId", "value": "1" }
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "movieId",
+      "value": ""
+    },
+    {
+      "key": "reviewId",
+      "value": ""
+    },
+    {
+      "key": "missingId",
+      "value": "000000000000000000000000"
+    }
   ],
   "item": [
     {
-      "name": "GET /v1/movies (list + search + sort + page)",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/v1/movies?keyword=&sort=-rating&page=1&limit=10",
-          "host": ["{{baseUrl}}"], "path": ["v1", "movies"],
-          "query": [
-            { "key": "keyword", "value": "" },
-            { "key": "sort", "value": "-rating" },
-            { "key": "page", "value": "1" },
-            { "key": "limit", "value": "10" }
-          ]
-        }
-      }
-    },
-    {
-      "name": "GET /v1/movies/:id",
-      "request": {
-        "method": "GET",
-        "url": { "raw": "{{baseUrl}}/v1/movies/1", "host": ["{{baseUrl}}"], "path": ["v1", "movies", "1"] }
-      }
-    },
-    {
-      "name": "POST /v1/movies (create)",
-      "event": [
+      "name": "Health",
+      "item": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var res = pm.response.json();",
-              "if (res && res.id) { pm.collectionVariables.set('movieId', res.id); }"
-            ],
-            "type": "text/javascript"
+          "name": "GET / (health)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('has message', () => pm.expect(pm.response.json()).to.have.property('message'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            }
           }
         }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": { "mode": "raw", "raw": "{\n  \"title\": \"Dune\",\n  \"genre\": \"Sci-Fi\",\n  \"year\": 2021,\n  \"rating\": 8.0,\n  \"director\": \"Denis Villeneuve\"\n}" },
-        "url": { "raw": "{{baseUrl}}/v1/movies", "host": ["{{baseUrl}}"], "path": ["v1", "movies"] }
-      }
+      ]
     },
     {
-      "name": "PUT /v1/movies/:id (update)",
-      "request": {
-        "method": "PUT",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": { "mode": "raw", "raw": "{\n  \"rating\": 8.4\n}" },
-        "url": { "raw": "{{baseUrl}}/v1/movies/{{movieId}}", "host": ["{{baseUrl}}"], "path": ["v1", "movies", "{{movieId}}"] }
-      }
+      "name": "Movies - happy path",
+      "item": [
+        {
+          "name": "POST /v1/movies (create) -> 201",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 201', () => pm.response.to.have.status(201));",
+                  "const b = pm.response.json();",
+                  "pm.test('returns an id', () => pm.expect(b.id).to.be.a('string').and.not.empty);",
+                  "pm.test('title echoed', () => pm.expect(b.title).to.eql('Postman Test Movie'));",
+                  "pm.test('has timestamps', () => pm.expect(b).to.have.property('createdAt'));",
+                  "pm.collectionVariables.set('movieId', b.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Postman Test Movie\",\n  \"genre\": \"Sci-Fi\",\n  \"year\": 2021,\n  \"rating\": 8,\n  \"director\": \"QA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /v1/movies (list) -> 200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('data is array', () => pm.expect(b.data).to.be.an('array'));",
+                  "pm.test('has pagination', () => pm.expect(b.pagination).to.include.all.keys('page','limit','total','totalPages'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /v1/movies?keyword&sort&page&limit -> 200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('limit applied', () => pm.expect(b.pagination.limit).to.eql(5));",
+                  "pm.test('page applied', () => pm.expect(b.pagination.page).to.eql(1));",
+                  "pm.test('keyword matched our movie', () => pm.expect(b.data.some(m => m.title.includes('Postman'))).to.be.true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies?keyword=Postman&sort=-rating&page=1&limit=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies"
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "Postman"
+                },
+                {
+                  "key": "sort",
+                  "value": "-rating"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /v1/movies/:id -> 200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('same id', () => pm.expect(pm.response.json().id).to.eql(pm.collectionVariables.get('movieId')));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/{{movieId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "{{movieId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /v1/movies/:id -> 200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('rating updated', () => pm.expect(b.rating).to.eql(8.4));",
+                  "pm.test('genre updated', () => pm.expect(b.genre).to.eql('Sci-Fi/Updated'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/{{movieId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "{{movieId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 8.4,\n  \"genre\": \"Sci-Fi/Updated\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     {
-      "name": "GET /v1/movies/:id/reviews",
-      "request": {
-        "method": "GET",
-        "url": { "raw": "{{baseUrl}}/v1/movies/{{movieId}}/reviews", "host": ["{{baseUrl}}"], "path": ["v1", "movies", "{{movieId}}", "reviews"] }
-      }
+      "name": "Reviews - happy path",
+      "item": [
+        {
+          "name": "POST /v1/movies/:id/reviews -> 201",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 201', () => pm.response.to.have.status(201));",
+                  "const b = pm.response.json();",
+                  "pm.test('review id present', () => pm.expect(b.id).to.be.a('string').and.not.empty);",
+                  "pm.test('linked to movie', () => pm.expect(b.movieId).to.eql(pm.collectionVariables.get('movieId')));",
+                  "pm.collectionVariables.set('reviewId', b.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/{{movieId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "{{movieId}}",
+                "reviews"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"author\": \"QA Bot\",\n  \"rating\": 5,\n  \"comment\": \"Great!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /v1/movies/:id/reviews -> 200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.test('count >= 1', () => pm.expect(b.count).to.be.at.least(1));",
+                  "pm.test('averageRating is number', () => pm.expect(b.averageRating).to.be.a('number'));",
+                  "pm.test('data is array', () => pm.expect(b.data).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/{{movieId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "{{movieId}}",
+                "reviews"
+              ]
+            }
+          }
+        }
+      ]
     },
     {
-      "name": "POST /v1/movies/:id/reviews (create review)",
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": { "mode": "raw", "raw": "{\n  \"author\": \"Dan\",\n  \"rating\": 5,\n  \"comment\": \"Epic!\"\n}" },
-        "url": { "raw": "{{baseUrl}}/v1/movies/{{movieId}}/reviews", "host": ["{{baseUrl}}"], "path": ["v1", "movies", "{{movieId}}", "reviews"] }
-      }
+      "name": "Error scenarios",
+      "item": [
+        {
+          "name": "GET /v1/movies/:missingId -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 404', () => pm.response.to.have.status(404));",
+                  "pm.test('error body', () => pm.expect(pm.response.json().error).to.eql('Movie not found'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/{{missingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "{{missingId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /v1/movies/not-a-valid-id -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('bad ObjectId -> 404', () => pm.response.to.have.status(404));",
+                  "pm.test('error body', () => pm.expect(pm.response.json()).to.have.property('error'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/not-a-valid-id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "not-a-valid-id"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /v1/movies (no title) -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('title required', () => pm.expect(pm.response.json().error).to.eql('title is required'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"genre\": \"x\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /v1/movies/:missingId -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 404', () => pm.response.to.have.status(404));",
+                  "pm.test('error body', () => pm.expect(pm.response.json().error).to.eql('Movie not found'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/{{missingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "{{missingId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST review (rating out of range) -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('rating range error', () => pm.expect(pm.response.json().error).to.include('between 1 and 5'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/{{movieId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "{{movieId}}",
+                "reviews"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"author\": \"QA Bot\",\n  \"rating\": 9\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST review (missing rating) -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('author+rating required', () => pm.expect(pm.response.json().error).to.eql('author and rating are required'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/{{movieId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "{{movieId}}",
+                "reviews"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"author\": \"QA Bot\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET reviews for missing movie -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 404', () => pm.response.to.have.status(404));",
+                  "pm.test('error body', () => pm.expect(pm.response.json().error).to.eql('Movie not found'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/{{missingId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "{{missingId}}",
+                "reviews"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /unknown-route -> 404 fallback",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 404', () => pm.response.to.have.status(404));",
+                  "pm.test('Not Found body', () => pm.expect(pm.response.json().error).to.eql('Not Found'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/this-route-does-not-exist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "this-route-does-not-exist"
+              ]
+            }
+          }
+        }
+      ]
     },
     {
-      "name": "DELETE /v1/movies/:id",
-      "request": {
-        "method": "DELETE",
-        "url": { "raw": "{{baseUrl}}/v1/movies/{{movieId}}", "host": ["{{baseUrl}}"], "path": ["v1", "movies", "{{movieId}}"] }
-      }
+      "name": "Cleanup",
+      "item": [
+        {
+          "name": "DELETE /v1/movies/:id -> 204",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status is 204', () => pm.response.to.have.status(204));",
+                  "pm.test('empty body', () => pm.expect(pm.response.text()).to.be.empty);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/{{movieId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "{{movieId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET deleted movie -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('now 404', () => pm.response.to.have.status(404));",
+                  "pm.test('error body', () => pm.expect(pm.response.json().error).to.eql('Movie not found'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/movies/{{movieId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "movies",
+                "{{movieId}}"
+              ]
+            }
+          }
+        }
+      ]
     }
   ]
 }
