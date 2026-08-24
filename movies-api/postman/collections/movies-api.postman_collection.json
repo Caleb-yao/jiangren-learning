@@ -1,0 +1,89 @@
+{
+  "info": {
+    "name": "Movies API (Day2)",
+    "description": "Movies CRUD + Reviews. Full flow: create -> read -> update -> review -> delete.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "movieId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "GET /v1/movies (list + search + sort + page)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/v1/movies?keyword=&sort=-rating&page=1&limit=10",
+          "host": ["{{baseUrl}}"], "path": ["v1", "movies"],
+          "query": [
+            { "key": "keyword", "value": "" },
+            { "key": "sort", "value": "-rating" },
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "10" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET /v1/movies/:id",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/v1/movies/1", "host": ["{{baseUrl}}"], "path": ["v1", "movies", "1"] }
+      }
+    },
+    {
+      "name": "POST /v1/movies (create)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var res = pm.response.json();",
+              "if (res && res.id) { pm.collectionVariables.set('movieId', res.id); }"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"title\": \"Dune\",\n  \"genre\": \"Sci-Fi\",\n  \"year\": 2021,\n  \"rating\": 8.0,\n  \"director\": \"Denis Villeneuve\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/movies", "host": ["{{baseUrl}}"], "path": ["v1", "movies"] }
+      }
+    },
+    {
+      "name": "PUT /v1/movies/:id (update)",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"rating\": 8.4\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/movies/{{movieId}}", "host": ["{{baseUrl}}"], "path": ["v1", "movies", "{{movieId}}"] }
+      }
+    },
+    {
+      "name": "GET /v1/movies/:id/reviews",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/v1/movies/{{movieId}}/reviews", "host": ["{{baseUrl}}"], "path": ["v1", "movies", "{{movieId}}", "reviews"] }
+      }
+    },
+    {
+      "name": "POST /v1/movies/:id/reviews (create review)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"author\": \"Dan\",\n  \"rating\": 5,\n  \"comment\": \"Epic!\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/movies/{{movieId}}/reviews", "host": ["{{baseUrl}}"], "path": ["v1", "movies", "{{movieId}}", "reviews"] }
+      }
+    },
+    {
+      "name": "DELETE /v1/movies/:id",
+      "request": {
+        "method": "DELETE",
+        "url": { "raw": "{{baseUrl}}/v1/movies/{{movieId}}", "host": ["{{baseUrl}}"], "path": ["v1", "movies", "{{movieId}}"] }
+      }
+    }
+  ]
+}

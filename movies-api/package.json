@@ -1,0 +1,26 @@
+{
+  "name": "movies-api",
+  "version": "1.0.0",
+  "description": "RESTful Movies CRUD + Reviews API built with Express",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "express",
+    "rest",
+    "api",
+    "movies"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
