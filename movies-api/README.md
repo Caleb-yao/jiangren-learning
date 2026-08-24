@@ -2,15 +2,21 @@
 
 RESTful API for Movies (CRUD) + Reviews, built with Express.
 
+Data is persisted in **MongoDB** via Mongoose.
+
 Production middleware: dotenv, helmet, morgan + winston, express-rate-limit, and Swagger docs.
 
 ## Run
 
 ```bash
 npm install
+# make sure MongoDB is running (default: mongodb://127.0.0.1:27017/moviesdb)
+npm run seed     # optional: load sample movies + reviews
 npm run dev      # nodemon, or: npm start
 # -> http://localhost:3000
 ```
+
+The server connects to MongoDB first, then starts listening. Data survives restarts.
 
 CORS is enabled, so a frontend page can call the API directly.
 
@@ -56,6 +62,7 @@ Copy `.env.example` to `.env` (already has sensible defaults, app also works wit
 |-----|---------|---------|
 | `NODE_ENV` | development | dev = pretty logs, prod = JSON logs |
 | `PORT` | 3000 | Server port |
+| `MONGODB_URI` | mongodb://127.0.0.1:27017/moviesdb | MongoDB connection string |
 | `LOG_LEVEL` | info | winston log level |
 | `RATE_LIMIT_WINDOW_MS` | 900000 | Rate-limit window (15 min) |
 | `RATE_LIMIT_MAX` | 100 | Max requests per window per IP |
@@ -109,7 +116,7 @@ Review { id, movieId, author, rating (1-5), comment, createdAt }
 | Bad input (missing/invalid field) | 400 |
 | Movie not found | 404 |
 
-Data is in-memory and resets when the server restarts.
+Data is stored in MongoDB and persists across restarts. Each document's `id` is a Mongo ObjectId string (exposed as `id`, not `_id`).
 
 ## Postman
 

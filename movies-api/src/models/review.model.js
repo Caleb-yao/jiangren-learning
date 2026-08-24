@@ -1,26 +1,23 @@
-// Data operations for reviews.
-const { reviews, nextReviewId } = require('./store');
+// Mongoose Schema + Model for Review (belongs to a Movie).
+const mongoose = require('mongoose');
 
-function findByMovieId(movieId) {
-    return reviews.filter((r) => r.movieId === Number(movieId));
-}
+const reviewSchema = new mongoose.Schema(
+    {
+        movieId: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie', required: true, index: true },
+        author:  { type: String, required: [true, 'author is required'] },
+        rating:  { type: Number, required: true, min: 1, max: 5 },
+        comment: { type: String, default: '' },
+    },
+    { timestamps: true }
+);
 
-function average(list) {
-    if (!list.length) return 0;
-    return Number((list.reduce((sum, r) => sum + r.rating, 0) / list.length).toFixed(2));
-}
+reviewSchema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: (doc, ret) => {
+        delete ret._id;
+        return ret;
+    },
+});
 
-function create(movieId, { author, rating, comment }) {
-    const review = {
-        id: nextReviewId(),
-        movieId: Number(movieId),
-        author,
-        rating: Number(rating),
-        comment: comment || '',
-        createdAt: new Date().toISOString(),
-    };
-    reviews.push(review);
-    return review;
-}
-
-module.exports = { findByMovieId, average, create };
+module.exports = mongoose.model('Review', reviewSchema);
