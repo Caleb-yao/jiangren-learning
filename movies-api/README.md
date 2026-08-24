@@ -43,6 +43,7 @@ server.js       starts the server
 | `morgan` + `winston` | HTTP request logging -> terminal + `logs/app.log` |
 | `express-rate-limit` | Throttle requests per IP (returns 429) |
 | `cors` | Allow the frontend to call the API |
+| `validateId` | Reject invalid `:id` early -> 404 `{ message: 'Id not found' }` (no Mongoose CastError) |
 | `swagger-ui-express` + `swagger-jsdoc` | Interactive API docs |
 
 ## API docs (Swagger)
@@ -136,6 +137,7 @@ Review { id, movieId, author, rating (1-5), comment, createdAt }
 | Deleted | 204 |
 | Bad input (missing/invalid field) | 400 |
 | Movie not found | 404 |
+| Invalid `:id` (not a Mongo ObjectId) | 404 `{ message: 'Id not found' }` |
 
 Data is stored in MongoDB and persists across restarts. Each document's `id` is a Mongo ObjectId string (exposed as `id`, not `_id`).
 

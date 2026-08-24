@@ -384,15 +384,15 @@
           }
         },
         {
-          "name": "GET /v1/movies/not-a-valid-id -> 404",
+          "name": "GET /v1/movies/not-a-valid-id -> 404 (validateId)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('bad ObjectId -> 404', () => pm.response.to.have.status(404));",
-                  "pm.test('error body', () => pm.expect(pm.response.json()).to.have.property('error'));"
+                  "pm.test('bad ObjectId -> 404 (not 500)', () => pm.response.to.have.status(404));",
+                  "pm.test('message body', () => pm.expect(pm.response.json().message).to.eql('Id not found'));"
                 ]
               }
             }

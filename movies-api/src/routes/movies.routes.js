@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/movies.controller');
+const validateId = require('../middleware/validateId.middleware');
 const reviewsRouter = require('./reviews.routes');
 
-// nested resource: /v1/movies/:id/reviews
-router.use('/:id/reviews', reviewsRouter);
+// validate :id up front for every route that has one (invalid -> 404 before controller)
+router.use('/:id/reviews', validateId('id'), reviewsRouter);
 
 router.get('/', controller.list);
-router.get('/:id', controller.getById);
 router.post('/', controller.create);
-router.put('/:id', controller.update);
-router.delete('/:id', controller.remove);
+
+router.get('/:id', validateId('id'), controller.getById);
+router.put('/:id', validateId('id'), controller.update);
+router.delete('/:id', validateId('id'), controller.remove);
 
 module.exports = router;
