@@ -2,6 +2,8 @@
 
 RESTful API for Movies (CRUD) + Reviews, built with Express.
 
+Production middleware: dotenv, helmet, morgan + winston, express-rate-limit, and Swagger docs.
+
 ## Run
 
 ```bash
@@ -25,6 +27,38 @@ src/
   app.js        assembles the express app
 server.js       starts the server
 ```
+
+## Middleware stack
+
+| Package | Purpose |
+|---------|---------|
+| `dotenv` | Load config from `.env` |
+| `helmet` | Security HTTP headers |
+| `morgan` + `winston` | HTTP request logging -> terminal + `logs/app.log` |
+| `express-rate-limit` | Throttle requests per IP (returns 429) |
+| `cors` | Allow the frontend to call the API |
+| `swagger-ui-express` + `swagger-jsdoc` | Interactive API docs |
+
+## API docs (Swagger)
+
+Start the server, then open:
+
+```
+http://localhost:3000/api-docs        # Swagger UI
+http://localhost:3000/api-docs.json    # raw OpenAPI spec
+```
+
+## Environment variables
+
+Copy `.env.example` to `.env` (already has sensible defaults, app also works without it):
+
+| Var | Default | Meaning |
+|-----|---------|---------|
+| `NODE_ENV` | development | dev = pretty logs, prod = JSON logs |
+| `PORT` | 3000 | Server port |
+| `LOG_LEVEL` | info | winston log level |
+| `RATE_LIMIT_WINDOW_MS` | 900000 | Rate-limit window (15 min) |
+| `RATE_LIMIT_MAX` | 100 | Max requests per window per IP |
 
 ## Endpoints
 
