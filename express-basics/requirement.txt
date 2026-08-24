@@ -1,0 +1,45 @@
+// reset password
+POST /v1/auth/forget-password
+Body
+{email}
+response status 200 404
+
+
+POST /v1/auth/verifyCode
+Body
+{email:'', code:''}
+response 200:{resetToken:''} 400
+ 
+
+POST /v1/auth/reset-password
+Body
+{
+email:'',
+resetToken:'',
+newPassword:''
+}
+response status: 200 400
+
+
+
+
+PUT /v1/user/me body: role, field, goal 
+
+
+POST /v1/dashboard/:id/resume-upload
+Body
+{
+filename:'',
+}
+(Status: 201, 403)
+ 
+
+DELETE /v1/dashboard/:id/resume
+Body
+{
+fileName | fileId:'',
+}
+(Status: 204)
+
+
+GET /movies
